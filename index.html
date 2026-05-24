@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="釜山行程">
+<title>🇰🇷 釜山 BTS ARIRANG 行程</title>
+<style>
+:root {
+  --purple:#7F77DD; --purple-dk:#3C3489; --purple-lt:#EEEDFE; --purple-md:#AFA9EC;
+  --bg:#f5f5f7; --card:#fff; --text:#1c1c1e; --sub:#6e6e73; --border:rgba(0,0,0,0.1);
+  --green-bg:#E1F5EE; --green-fg:#085041; --blue-bg:#E6F1FB; --blue-fg:#0C447C;
+  --red-bg:#FCEBEB; --red-fg:#A32D2D; --amber-bg:#FAC775; --amber-fg:#633806;
+  --teal-bg:#EAF3DE; --teal-fg:#3B6D11; --r:12px; --rs:8px;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#1c1c1e; --card:#2c2c2e; --text:#f5f5f7; --sub:#aeaeb2; --border:rgba(255,255,255,0.12);
+    --purple-lt:#26215C; --green-bg:#083028; --green-fg:#5DCAA5; --blue-bg:#0a2a42;
+    --blue-fg:#85B7EB; --red-bg:#3a1010; --red-fg:#F09595; --amber-bg:#3a2800;
+    --amber-fg:#EF9F27; --teal-bg:#1a2e10; --teal-fg:#97C459; }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 20px)}
+
+/* Header */
+.hd{background:var(--card);border-bottom:.5px solid var(--border);padding:14px 16px 10px;position:sticky;top:0;z-index:100}
+.hd-title{font-size:17px;font-weight:600}
+.hd-sub{font-size:11px;color:var(--sub);margin-top:1px}
+.hd-row{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
+.btn-save{background:var(--purple);color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:background .2s}
+.btn-save.ok{background:#34C759}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--sub);cursor:pointer}
+
+/* Tabs */
+.tabs{display:flex;gap:7px;padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--card);border-bottom:.5px solid var(--border)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--sub);white-space:nowrap;transition:all .2s}
+.tab.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+/* Content */
+.pg{padding:12px 16px;max-width:600px;margin:0 auto}
+
+/* Day header */
+.dh{background:var(--card);border-radius:var(--r);padding:13px;margin-bottom:10px}
+.dbadge{display:inline-block;background:var(--purple);color:#fff;font-size:11px;font-weight:600;padding:2px 10px;border-radius:10px;margin-bottom:5px}
+.dtitle{font-size:16px;font-weight:600;margin-bottom:2px}
+.dtheme{font-size:12px;color:var(--purple);margin-bottom:3px}
+.dhotel{font-size:11px;color:var(--sub)}
+
+/* Plan toggle */
+.ptog{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:10px;border:1px solid var(--border)}
+.pbtn{flex:1;padding:7px 6px;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--sub);transition:all .2s}
+.pbtn.on{background:var(--purple);color:#fff}
+
+/* Item card */
+.il{display:flex;flex-direction:column;gap:8px}
+.ic{background:var(--card);border-radius:var(--rs);padding:12px;border-left:3px solid var(--purple-md)}
+.ic.editing{border:2px solid var(--purple);border-radius:var(--rs)}
+.ic-time{font-size:11px;color:var(--sub);font-weight:600;margin-bottom:2px}
+.ic-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.ic-desc{font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:5px;white-space:pre-line}
+.ic-img{width:100%;border-radius:8px;margin-bottom:6px;max-height:200px;object-fit:cover;display:block}
+.ic-link{font-size:11px;color:var(--purple);text-decoration:none;display:inline-block;margin-top:1px}
+.ia{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}
+.ab{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--sub)}
+.ab.ep{color:var(--purple);border-color:var(--purple-md)}
+.ab.dp{color:var(--red-fg);border-color:var(--red-bg)}
+
+/* Tags */
+.tgs{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 5px}
+.tg{font-size:10px;font-weight:500;padding:2px 8px;border-radius:8px}
+.tg-bts{background:var(--purple-lt);color:var(--purple-dk)}
+.tg-star{background:var(--purple);color:#fff}
+.tg-ok{background:var(--green-bg);color:var(--green-fg)}
+.tg-ok24{background:var(--teal-bg);color:var(--teal-fg)}
+.tg-book{background:var(--blue-bg);color:var(--blue-fg)}
+.tg-warn{background:var(--red-bg);color:var(--red-fg)}
+.tg-cafe{background:var(--amber-bg);color:var(--amber-fg)}
+.tg-def{background:var(--bg);color:var(--sub)}
+
+/* Edit form */
+.ef{display:flex;flex-direction:column;gap:8px}
+.er{display:grid;grid-template-columns:68px 44px 1fr;gap:5px}
+.inp{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--text);width:100%;outline:none;-webkit-appearance:none;font-family:inherit}
+.inp:focus{border-color:var(--purple)}
+textarea.inp{resize:vertical;line-height:1.5;min-height:68px}
+.etgs{display:flex;flex-wrap:wrap;gap:4px;min-height:10px}
+.trm{font-size:9px;margin-left:2px;opacity:.7;cursor:pointer}
+.tagrow{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.tagrow .inp{flex:1;font-size:12px;min-width:80px}
+.color-strip{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0}
+.cs{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:transform .15s}
+.cs.sel{border-color:var(--text);transform:scale(1.18)}
+.tg-custom{font-size:10px;font-weight:500;padding:2px 8px;border-radius:8px}
+
+/* Image section */
+.img-section{display:flex;flex-direction:column;gap:6px}
+.img-btns{display:flex;gap:6px}
+.img-btn{flex:1;padding:9px 6px;border:1.5px dashed var(--border);border-radius:8px;background:transparent;cursor:pointer;font-size:12px;color:var(--sub);text-align:center}
+.img-btn:active{background:var(--bg)}
+.img-preview{width:100%;border-radius:8px;max-height:180px;object-fit:cover;display:block}
+.img-clear{background:var(--red-bg);color:var(--red-fg);border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;align-self:flex-start}
+
+.ea{display:flex;gap:7px;justify-content:flex-end;margin-top:2px}
+.bp{background:var(--purple);color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer}
+.bc{background:none;border:1px solid var(--border);border-radius:10px;padding:8px 13px;font-size:13px;cursor:pointer;color:var(--sub)}
+
+/* Add button */
+.add{width:100%;padding:12px;border:1.5px dashed var(--border);border-radius:var(--rs);background:transparent;cursor:pointer;font-size:13px;color:var(--sub);margin-top:6px}
+.add:active{background:var(--bg)}
+
+/* Notice */
+.notice{background:var(--purple-lt);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--purple-dk);line-height:1.7;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div id="hdText" onclick="editTitle()">
+    <div class="hd-title" id="hdT">🇰🇷 釜山 BTS ARIRANG 行程</div>
+    <div class="hd-sub">6/10–6/14 ｜ 點 ✏️ 編輯・📷 從相簿加圖</div>
+  </div>
+  <div id="hdEdit" style="display:none;gap:6px;align-items:center;display:none">
+    <input class="inp" id="hdInp" style="flex:1;font-size:15px;font-weight:600">
+    <button class="bp" style="white-space:nowrap" onclick="saveTitle()">✓</button>
+  </div>
+  <div class="hd-row">
+    <button class="btn-save" id="svBtn" onclick="saveAll()">💾 儲存</button>
+    <button class="btn-sm" onclick="doExport()">📤 匯出</button>
+    <button class="btn-sm" onclick="doImport()">📥 匯入</button>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="pg" id="pg"></div>
+
+<input type="file" id="fileImg" accept="image/*" style="display:none" onchange="handleImgFile(this)">
+<input type="file" id="fileJSON" accept=".json" style="display:none" onchange="handleJSON(this)">
+
+<script>
+// ─── Tag colour system ───────────────────────────────────────────────────────
+// Built-in keyword → class map
+const TM = {"演唱會！":"star","BTS THE CITY":"bts","官方活動":"bts","BTS無人機秀":"bts","限定周邊":"bts","⭐已預約！":"star","⭐今日重頭戲":"star","預約制":"book","Naver預約強烈建議":"book","強烈建議預約":"book","Weverse建議預約":"book","建議預約":"book","接駁巴士建議預訂":"book","接駁巴士務必預訂":"book","B2 Showroom 免預約":"book","獨旅OK✅":"ok","1人OK✅":"ok","1人1份✅":"ok","혼밥 可":"ok","免費":"ok","24小時":"ok24","⚠️ 18:30入場！":"warn","Break Time注意⚠️":"warn","週二公休⚠️":"warn","月曜休⚠️":"warn","⚠️提早出發":"warn","禁拍照":"warn","超過20分鐘未到=no-show":"warn","提前10分鐘":"warn","休息優先":"warn","Creatrip折扣":"cafe","英語OK":"cafe","海景咖啡廳":"cafe","夕陽海景":"cafe"};
+
+// 8 colour presets (bg / fg pairs)
+const PALETTES = [
+  {id:"purple", bg:"#EEEDFE", fg:"#3C3489", dot:"#7F77DD"},   // 紫（BTS）
+  {id:"blue",   bg:"#E6F1FB", fg:"#0C447C", dot:"#4A9EE0"},   // 藍（預約）
+  {id:"green",  bg:"#E1F5EE", fg:"#085041", dot:"#34C759"},   // 綠（OK）
+  {id:"teal",   bg:"#EAF3DE", fg:"#3B6D11", dot:"#6CC04A"},   // 淺綠（24hr）
+  {id:"red",    bg:"#FCEBEB", fg:"#A32D2D", dot:"#FF3B30"},   // 紅（警告）
+  {id:"amber",  bg:"#FAC775", fg:"#633806", dot:"#FF9500"},   // 橘（咖啡）
+  {id:"pink",   bg:"#FCE8F3", fg:"#8B1A5C", dot:"#FF2D78"},   // 粉
+  {id:"gray",   bg:"#F0F0F2", fg:"#555", dot:"#AEAEB2"},      // 灰
+];
+// custom colour store: { "tagText": paletteId }
+let CC = {};
+try{ CC = JSON.parse(localStorage.getItem("bt4_cc")||"{}"); }catch(e){}
+
+let _selColor = "purple"; // currently selected in picker
+
+function saveCC(){ try{ localStorage.setItem("bt4_cc", JSON.stringify(CC)); }catch(e){} }
+
+// Return inline style string for a tag (built-in → class, custom → inline)
+function tagStyle(t){
+  const builtIn = TM[t];
+  if(builtIn) return null; // use CSS class
+  const pal = PALETTES.find(p=>p.id===(CC[t]||"gray")) || PALETTES[7];
+  return `background:${pal.bg};color:${pal.fg}`;
+}
+function tagClass(t){ return TM[t] ? "tg tg-"+TM[t] : "tg tg-custom"; }
+function renderTag(t, rmCall){
+  const st = tagStyle(t);
+  const style = st ? ` style="${st}"` : "";
+  const rm = rmCall ? `<span class="trm" onclick="${rmCall}">×</span>` : "";
+  return `<span class="${tagClass(t)}"${style}>${esc(t)}${rm}</span>`;
+}
+
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let S = {
+  title:"🇰🇷 釜山 BTS ARIRANG 行程",
+  day:"d1", plan:{d3:"A",d4:"A"}, editing:null,
+  pendingImg:null, // {dayId, itemId, base64}
+  days:[]
+};
+
+// ─── Initial data (from latest backup) ───────────────────────────────────────
+const INIT = {"title":"🇰🇷 釜山 BTS ARIRANG 行程","days":[{"id":"d1","date":"6/10（三）","title":"抵達釜山・剪髮","theme":"落地即美麗，西面第一晚","hotel":"Lala Vianco Hotel Busan","plan":null,"items":[{"id":"i1-1","time":"02:40","emoji":"✈️","title":"桃園出發 LJ752","desc":"真航空 LJ752，02:40 起飛，06:15 抵達金海機場。機上補眠。","tags":[],"link":"","img":""},{"id":"i1-2","time":"06:15","emoji":"🛬","title":"金海機場入境 → WOWPASS","desc":"入境大廳有 WOWPASS 機台（換匯+T-money一體）。\n建議兌換 15–20 萬韓元現金備用。","tags":["必做"],"link":"","img":""},{"id":"i1-3","time":"08:00","emoji":"🚕","title":"機場 → 飯店","desc":"• 計程車直達約 25 分（25,000–30,000₩）。\n• 機場輕軌至沙上站轉地鐵 2 號線西面站。\n• 9:00寄放行李 / 梳洗。","tags":[],"link":"","img":""},{"id":"x1779585097291pkl5","time":"09:00","emoji":"💊","title":"買驅蟲藥","desc":"空腹吃","tags":[],"link":"https://share.icloud.com/photos/094pSwCJBaJqSFHKhQ_0FoqFw","img":""},{"id":"i1-4","time":"10:00","emoji":"✂️","title":"ARTICRE K-Hair 剪髮（西面）","desc":"20年資深設計師，提供英語服務。Creatrip 專屬優惠最高 8 折（TWD 1,140 起）。出示手機憑證入場，施術約 60–90 分鐘。預約日期前3日內無法退改。","tags":["預約制","英語OK","Creatrip折扣"],"link":"https://creatrip.com/spot/15110","naverLink":"https://map.naver.com/v5/search/ARTICRE%20%EB%B6%80%EC%82%B0%EC%84%9C%EB%A9%B4","img":""},{"id":"i1-5","time":"12:30","emoji":"🦑","title":"午餐：螞蟻窩總店 개미집 서면총본점","desc":"釜山名物「낙곱새」炒八爪魚+牛腸+蝦，50年老店。\n1人份可點，西面站步行5分。\n⏰ 09:00–02:00（last order 00:30）","tags":["獨旅OK✅","낙곱새7,000₩","☎️電話預約"],"link":"https://naver.me/FaeOi9Hf","naverLink":"https://naver.me/FaeOi9Hf","img":""},{"id":"i1-6","time":"14:30","emoji":"🚶","title":"南浦洞・BIFF廣場散步","desc":"電影節廣場、光復路一帶，步行距離集中不累。","tags":[],"link":"https://map.naver.com/v5/search/%EB%82%A8%ED%8F%AC%EB%8F%99","img":""},{"id":"i1-7","time":"19:00","emoji":"💜","title":"釜山站 BTS 媒體藝術投影","desc":"BTS THE CITY 期間（6/5–21）外牆 BTS 主題投影，夜間效果最佳。地鐵 1 號線釜山站。","tags":["BTS THE CITY","免費"],"link":"https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EC%97%AD","img":""}]},{"id":"d2","date":"6/11（四）","title":"The Art 咖啡・31cm刀削麵・POP-UP B2・膠囊列車夕陽","theme":"海景療癒，BTS氛圍滿載","hotel":"Lala Vianco → UH Suite（轉換）","plan":null,"items":[{"id":"i2-1","time":"08:30","emoji":"🧳","title":"退房 → 行李寄放 → 早餐","desc":"退房後行李存放飯店，便利商店快速早餐，搭地鐵至中洞站方向。","tags":[],"link":"","img":""},{"id":"i2-2","time":"09:30","emoji":"☕","title":"The Art 咖啡（더아트）","desc":"尾浦站步行圈海景咖啡廳。膠囊列車出發前先喝杯咖啡拍海景。建議開門即去，人少氛圍最佳。","tags":["獨旅OK✅","海景咖啡廳"],"link":"https://naver.me/xy7dLoQF","naverLink":"https://naver.me/xy7dLoQF","img":""},{"id":"i2-3","time":"11:00","emoji":"🍜","title":"午餐：31cm 海鮮刀削麵 송정직영점","desc":"31cm 大碗海鮮刀削麵，巨量海鮮，湯頭鮮甜。1人1份制，獨旅友善。\n⏰ 매일 11:00–21:00｜週二公休⚠️","tags":["1人1份✅","週二公休⚠️"],"link":"https://naver.me/5xgaXBOq","naverLink":"https://naver.me/5xgaXBOq","img":""},{"id":"i2-4","time":"13:30","emoji":"🏨","title":"移動至 Centum → 辦理 UH Suite 入住","desc":"搭計程車或公車至 Centum City，行李搬入新飯店稍作休息。","tags":[],"link":"","img":""},{"id":"i2-5","time":"15:00","emoji":"💜","title":"BTS POP-UP B2 SHOW ROOM（免預約）","desc":"新世界百貨 Centum City B2。免預約直接入場排隊，停留最多30分鐘。\n⏰ 週一–四 10:30–20:00（今天週四到20:00）\n📅 至 6/14（日）止","tags":["BTS THE CITY","B2 Showroom 免預約","至6/14止"],"link":"https://map.naver.com/v5/search/%EC%8B%A0%EC%84%B8%EA%B3%84%EB%B0%B1%ED%99%94%EC%A0%90%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0","img":""},{"id":"i2-6","time":"17:30","emoji":"🎬","title":"釜山電影殿堂 BTS 燈光秀","desc":"與新世界百貨同區，步行約10分鐘。6/11–15 日落後外牆 BTS 主題燈光展演，效果絕佳！","tags":["BTS THE CITY","免費","6/11–15"],"link":"https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EC%98%81%ED%99%94%EC%9D%98%EC%A0%84%EB%8B%B9","img":""},{"id":"i2-7","time":"18:20","emoji":"🚶","title":"移動至尾浦膠囊列車售票處","desc":"從 Centum 搭計程車或地鐵至中洞站，步行至尾浦藍線公園。請在 18:30 前到達！","tags":["⚠️ 18:30入場！"],"link":"","img":""},{"id":"i2-8","time":"18:30","emoji":"🚃","title":"⭐ 天空膠囊列車（21梯次）夕陽場！","desc":"預約編號：RS26007603682\n搭乘日期：2026/06/11（四）\n場次：21梯次（18:30–19:00入場）\nSky Capsule 單程 2人搭乘券×1\n\n尾浦→青沙浦方向，靠海外側視野無遮擋。18:30 夕陽黃金時段！","tags":["⭐已預約！","18:30入場","夕陽海景","2人搭乘券"],"link":"https://tket.me/SYzQJHh","naverLink":"https://map.naver.com/v5/search/%ED%95%B4%EC%9A%B4%EB%8C%80%EB%B8%94%EB%A3%A8%EB%9D%BC%EC%9D%B8%ED%8C%8C%ED%81%AC","img":""},{"id":"i2-9","time":"20:00","emoji":"🌊","title":"廣안里夜景 + 晚餐","desc":"膠囊列車後前往廣안里，欣賞廣安大橋夜景。\n推薦晚餐：수변최고돼지국밥（廣안里旁，24小時）","tags":["廣안大橋夜景"],"link":"https://naver.me/x9VzOYfn","img":""}]},{"id":"d3","date":"6/12（五）","title":"演唱會 Day 1","theme":"BTS ARIRANG — 釜山亞運主競技場","hotel":"UH Suite → CENTUM PREMIER HOTEL（轉換）","plan":"AB","planA":[{"id":"i3a-1","time":"09:00","emoji":"☀️","title":"早餐 + 整理演唱會裝備","desc":"確認 Weverse App 電子票、燈棒電量、行動電源、雨衣（備用）、零食、防曬。","tags":[],"link":"","img":""},{"id":"i3a-2","time":"10:30","emoji":"💜","title":"ARMY MADANG @ The Bay 101","desc":"BTS 官方粉絲互動空間。Samsung Galaxy 體驗、TIRTIR 美妝、Google Gemini 展間、限定周邊。建議提前在 Weverse 預約入場。廣안里旁，地鐵 2 號線廣安站步行可達。","tags":["官方活動","Weverse建議預約","限定周邊"],"link":"https://map.naver.com/v5/search/%EB%8D%94%EB%B2%A0%EC%9D%B4101","img":""},{"id":"i3a-3","time":"13:00","emoji":"🦀","title":"午餐：미포집 해운대총점","desc":"原創해물장（海鮮醬料+石鍋飯），1人OK。演唱會期間人超多，提前 Naver/Tabling 預約！\n⏰ 11:00–21:00（Break 평일 15:00–17:00）","tags":["1人OK✅","強烈建議預約","Break Time注意⚠️"],"link":"https://naver.me/5HyrWmu0","naverLink":"https://naver.me/5HyrWmu0","img":""},{"id":"i3a-4","time":"15:30","emoji":"🏨","title":"返回飯店休息換裝 → 儲備體力！","desc":"演唱會最重要的準備是休息！確認電子票、燈棒電量、行動電源全滿電。","tags":["休息優先"],"link":"","img":""},{"id":"i3a-5","time":"17:00","emoji":"🚌","title":"搭接駁巴士前往亞運主競技場","desc":"強烈建議提前預訂 KKday/Klook 接駁巴士（釜山站/西面站/해운대站上車）。提早到場外感受應援文化！","tags":["接駁巴士建議預訂"],"link":"https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EC%95%84%EC%8B%9C%EC%95%84%EB%93%9C%EC%A3%BC%EA%B2%BD%EA%B8%B0%EC%9E%A5","img":""},{"id":"i3a-6","time":"20:00","emoji":"🎤","title":"🎤 BTS WORLD TOUR 'ARIRANG' Day 1","desc":"全力享受！禁止自拍棒、大型攝影設備。約 2 小時，預計 22:00 左右結束。演唱會後搭接駁巴士回程！","tags":["演唱會！"],"link":"","img":""}],"planB":[{"id":"i3b-1","time":"09:30","emoji":"💜","title":"ARMY MADANG @ The Bay 101","desc":"今天演唱會日氛圍最旺，上午去避開下午人潮。Samsung、TIRTIR、Google Gemini 體驗。請提前在 Weverse 預約。","tags":["官方活動","建議預約"],"link":"https://map.naver.com/v5/search/%EB%8D%94%EB%B2%A0%EC%9D%B4101","img":""},{"id":"i3b-2","time":"12:00","emoji":"🦀","title":"午餐：미포집 해운대총점","desc":"今天人潮最多，提前去！建議 11:00 開店首批，或提前 Naver 預約。\n⏰ 11:00–21:00（Break 15:00–17:00）","tags":["1人OK✅","強烈建議預約"],"link":"https://naver.me/5HyrWmu0","naverLink":"https://naver.me/5HyrWmu0","img":""},{"id":"i3b-3","time":"14:30","emoji":"🛍","title":"BTS POP-UP B2 Showroom + 補充購物","desc":"B2 免預約排隊入場，停留最多30分鐘。B1 商品區若有庫存可補購。至 6/14 止。","tags":["BTS THE CITY","B2 Showroom 免預約"],"link":"https://map.naver.com/v5/search/%EC%8B%A0%EC%84%B8%EA%B3%84%EB%B0%B1%ED%99%94%EC%A0%90%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0","img":""},{"id":"i3b-4","time":"19:00","emoji":"🌌","title":"🌌 廣안里 BTS 無人機秀！（6/12 週五）","desc":"廣안里海灘上空 BTS 主題無人機秀！不需門票，免費觀賞。建議提早佔位，今晚最佳替代體驗。","tags":["BTS無人機秀","免費","6/12&13各一場"],"link":"https://map.naver.com/v5/search/%EA%B4%91%EC%95%88%EB%A6%AC%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5","img":""},{"id":"i3b-5","time":"21:30","emoji":"🍖","title":"宵夜：수변최고돼지국밥 민락본점","desc":"廣안里旁步行可達，24小時，獨旅OK。無人機秀結束立刻去排隊！","tags":["24小時","獨旅OK✅"],"link":"https://naver.me/x9VzOYfn","naverLink":"https://naver.me/x9VzOYfn","img":""}]},{"id":"d4","date":"6/13（六）","title":"演唱會 Day 2 / BTS 聖地巡禮","theme":"POP-UP首場→演唱會/聖地巡禮→無人機秀","hotel":"CENTUM PREMIER HOTEL","plan":"AB","planA":[{"id":"i4a-0","time":"10:20","emoji":"💜","title":"⭐ BTS POP-UP B1 MERCH. SHOP（已預約首場！）","desc":"預約時段：6/13（六）10:30 首場！\n\n✦ 10:20 前到達新世界百貨 Centum City B1\n✦ 出示 Weverse QR Code（截圖無效！）\n✦ 超過預約時間 20 分鐘未到 = no-show\n✦ 停留最多 30 分鐘，不可重複入場\n✦ 今天（週六）營業至 20:30","tags":["⭐已預約！","提前10分鐘","超過20分鐘未到=no-show"],"link":"https://map.naver.com/v5/search/%EC%8B%A0%EC%84%B8%EA%B3%84%EB%B0%B1%ED%99%94%EC%A0%90%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0","img":""},{"id":"i4a-1","time":"12:00","emoji":"🌊","title":"海雲台海水浴場 + Love Song Lounge","desc":"Centum 地鐵 2 站。BTS THE CITY「Love Song Lounge」粉絲特設區在附近，砂雕節同時舉辦。","tags":["BTS THE CITY"],"link":"https://map.naver.com/v5/search/%ED%95%B4%EC%9A%B4%EB%8C%80%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5","img":""},{"id":"i4a-2","time":"15:00","emoji":"🏨","title":"返回飯店休息換裝 → 第二場準備！","desc":"今天週六，接駁巴士回程更要提前預訂！確認燈棒電量、行動電源。","tags":["休息優先","接駁巴士務必預訂"],"link":"","img":""},{"id":"i4a-3","time":"17:00","emoji":"🎤","title":"🎤 BTS WORLD TOUR 'ARIRANG' Day 2","desc":"第二場！週六人潮最多，接駁巴士務必提前預訂。享受最後一場演唱會！","tags":["演唱會！"],"link":"https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EC%95%84%EC%8B%9C%EC%95%84%EB%93%9C%EC%A3%BC%EA%B2%BD%EA%B8%B0%EC%9E%A5","img":""}],"planB":[{"id":"i4b-0","time":"10:20","emoji":"💜","title":"⭐ BTS POP-UP B1 MERCH. SHOP（已預約首場！）","desc":"預約時段：6/13（六）10:30 首場！\n\n✦ 10:20 前到達新世界百貨 Centum City B1\n✦ 出示 Weverse QR Code（截圖無效！）\n✦ 超過預約時間 20 分鐘未到 = no-show\n✦ 停留最多 30 分鐘，不可重複入場","tags":["⭐已預約！","提前10分鐘","超過20分鐘未到=no-show"],"link":"https://map.naver.com/v5/search/%EC%8B%A0%EC%84%B8%EA%B3%84%EB%B0%B1%ED%99%94%EC%A0%90%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0","img":""},{"id":"i4b-1","time":"12:00","emoji":"🏛","title":"BTS 聖地：釜山市民公園（V 拍攝地）","desc":"V 拍攝過的場景在這裡！地面有標示 V 當時拍照位置。地鐵 1 號線釜田站 7 號出口步行 5 分，南門入場最快。","tags":["V聖地","免費"],"link":"https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EC%8B%9C%EB%AF%BC%EA%B3%B5%EC%9B%90","img":""},{"id":"i4b-2","time":"14:00","emoji":"🎨","title":"釜山市立美術館 → 李禹煥空間（RM 聖地）","desc":"RM 在 1F 咖啡廳留下簽名的地方。李禹煥空間禁止拍照，專注欣賞。\n⏰ 화–일 10:00–20:00（月曜休⚠️）","tags":["RM聖地","月曜休⚠️","禁拍照"],"link":"https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EC%8B%9C%EB%A6%BD%EB%AF%B8%EC%88%A0%EA%B4%80","img":""},{"id":"i4b-3","time":"16:30","emoji":"🛍","title":"BTS POP-UP B2 最後逛逛","desc":"今天週六人最多，建議 16:30 後再去 B2。明天（6/14）是最後一天，今天確認有無遺漏。","tags":["B2 Showroom 免預約"],"link":"","img":""},{"id":"i4b-4","time":"19:00","emoji":"🌌","title":"🌌 廣안里 BTS 無人機秀（6/13 週六最旺！）","desc":"週六場人潮最多，氣氛最沸騰！提早佔好位。廣安大橋燈光 + BTS 無人機 = 今晚完美夜景。","tags":["BTS無人機秀","免費","6/13週六"],"link":"https://map.naver.com/v5/search/%EA%B4%91%EC%95%88%EB%A6%AC%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5","img":""}]},{"id":"d5","date":"6/14（日）","title":"最後掃貨 → 回台灣","theme":"BTS POP-UP最後一天，晚間回台","hotel":"CENTUM PREMIER → 金海機場","plan":null,"items":[{"id":"i5-1","time":"09:00","emoji":"🧳","title":"退房 → 行李寄放 → 快速早餐","desc":"退房後行李存飯店，便利商店快速早餐。今天 22:00 班機，建議 17:00 前出發去機場。","tags":[],"link":"","img":""},{"id":"i5-2","time":"10:00","emoji":"🛍","title":"新世界百貨 Centum 最後掃貨","desc":"地下美食廣場+超市：古來思魚板、HBAF 杏仁果、泡麵零食。Olive Young 補化妝品（TIRTIR BTS 限定）。退稅請在百貨服務台辦理即時退稅。","tags":["退稅辦理","BTS限定TIRTIR"],"link":"https://map.naver.com/v5/search/%EC%8B%A0%EC%84%B8%EA%B3%84%EB%B0%B1%ED%99%94%EC%A0%90%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0","img":""},{"id":"i5-3","time":"14:00","emoji":"🍜","title":"最後午餐 + 告別咖啡","desc":"Centum 附近最後一餐。未吃到的清單（미포집 或 수변최고돼지국밥）是最後機會！","tags":["最後一餐"],"link":"","img":""},{"id":"i5-4","time":"16:30","emoji":"🏨","title":"回飯店取行李","desc":"確認所有行李、護照、票券、伴手禮是否齊全。","tags":[],"link":"","img":""},{"id":"i5-5","time":"17:00","emoji":"🚇","title":"Centum → 金海機場（50–60分）","desc":"地鐵 2 號線至沙上站，轉機場鐵路至金海機場。或計程車約 40 分（40,000–50,000₩）。6/14 週日離境人潮多，預留充裕時間！","tags":["⚠️提早出發"],"link":"https://map.naver.com/v5/search/%EA%B9%80%ED%95%B4%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD","img":""},{"id":"i5-6","time":"19:00","emoji":"✈️","title":"機場 Check-in → 免稅店 → 登機","desc":"建議 19:00 前抵達機場（22:00 班機 LJ751）。金海機場免稅店有化妝品、零食可掃。22:00 起飛，23:40 抵達桃園。","tags":["LJ751 22:00起飛","19:00前到機場⚠️"],"link":"","img":""}]}]};
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+(function(){
+  try {
+    const saved = localStorage.getItem("bt4");
+    S.days = saved ? JSON.parse(saved).days : JSON.parse(JSON.stringify(INIT.days));
+    S.title = saved ? (JSON.parse(saved).title||INIT.title) : INIT.title;
+  } catch(e){ S.days = JSON.parse(JSON.stringify(INIT.days)); }
+  document.getElementById("hdT").textContent = S.title;
+  render();
+})();
+
+// ─── Getters/Setters ──────────────────────────────────────────────────────────
+function getItems(day){ return day.plan==="AB" ? ((S.plan[day.id]||"A")==="A"?day.planA:day.planB) : (day.items||[]); }
+function setItems(dayId,arr){ const d=S.days.find(x=>x.id===dayId); if(d.plan==="AB"){ if((S.plan[dayId]||"A")==="A") d.planA=arr; else d.planB=arr; } else d.items=arr; }
+function uid(){ return "u"+Date.now()+Math.random().toString(36).slice(2,5); }
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+function render(){ renderTabs(); renderPage(); document.getElementById("hdT").textContent=S.title; }
+
+function renderTabs(){
+  document.getElementById("tabs").innerHTML = S.days.map(d=>
+    `<button class="tab${d.id===S.day?" on":""}" onclick="gotoDay('${d.id}')">${d.date.split("（")[0]}</button>`
+  ).join("");
+}
+
+function renderPage(){
+  const day = S.days.find(d=>d.id===S.day); if(!day) return;
+  const items = getItems(day);
+  const plan = S.plan[day.id]||"A";
+  let h = `<div class="dh">
+    <div class="dbadge">${day.date}</div>
+    <div class="dtitle">${esc(day.title)}</div>
+    ${day.theme?`<div class="dtheme">${esc(day.theme)}</div>`:""}
+    <div class="dhotel">🏨 ${esc(day.hotel)}</div>
+    <div style="display:flex;justify-content:flex-end;margin-top:8px">
+      <button class="btn-sm" onclick="editDayHd('${day.id}')">✏️ 編輯日標題</button>
+    </div>
+  </div>`;
+  if(day.plan==="AB"){
+    h+=`<div class="ptog">
+      <button class="pbtn${plan==="A"?" on":""}" onclick="setPlan('${day.id}','A')">Plan A（有票）</button>
+      <button class="pbtn${plan==="B"?" on":""}" onclick="setPlan('${day.id}','B')">Plan B（無票）</button>
+    </div>`;
+  }
+  h+=`<div class="il">`;
+  items.forEach((item,i)=>{
+    h += S.editing===item.id ? renderEdit(item,day.id) : renderCard(item,i,items.length,day.id);
+  });
+  h+=`</div><button class="add" onclick="addItem('${day.id}')">＋ 新增行程項目</button>`;
+  document.getElementById("pg").innerHTML=h;
+}
+
+function renderCard(item,idx,total,dayId){
+  const tags=item.tags.map(t=>renderTag(t)).join("");
+  const img=item.img?`<img class="ic-img" src="${esc(item.img)}" onerror="this.style.display='none'">`:"";
+  const lbl=item.naverLink&&item.link===item.naverLink?"📍 Naver 地圖":"🔗 相關連結";
+  const link=item.link?`<a class="ic-link" href="${esc(item.link)}" target="_blank">${lbl}</a>`:"";
+  const mu=idx>0?`<button class="ab" onclick="moveItem('${dayId}','${item.id}',-1)">↑</button>`:"";
+  const md=idx<total-1?`<button class="ab" onclick="moveItem('${dayId}','${item.id}',1)">↓</button>`:"";
+  return `<div class="ic">
+    <div class="ic-time">${esc(item.time)}</div>
+    <div class="ic-title">${esc(item.emoji)} ${esc(item.title)}</div>
+    ${item.desc?`<div class="ic-desc">${esc(item.desc)}</div>`:""}
+    ${tags?`<div class="tgs">${tags}</div>`:""}
+    ${img}${link}
+    <div class="ia">${mu}${md}
+      <button class="ab ep" onclick="startEdit('${item.id}')">✏️</button>
+      <button class="ab dp" onclick="delItem('${dayId}','${item.id}')">🗑</button>
+    </div>
+  </div>`;
+}
+
+function renderEdit(item,dayId){
+  const tags=item.tags.map((t,i)=>renderTag(t,`rmTag('${item.id}',${i})`)).join("");
+  const dots = PALETTES.map(p=>`<span class="cs${_selColor===p.id?" sel":""}" style="background:${p.dot}" onclick="pickColor('${p.id}')" title="${p.id}"></span>`).join("");
+  const imgBlock = item.img
+    ? `<div class="img-section">
+        <img class="img-preview" src="${esc(item.img)}" onerror="this.style.display='none'" id="ipv">
+        <button class="img-clear" onclick="clearImg('${item.id}','${dayId}')">✕ 移除圖片</button>
+       </div>`
+    : `<div class="img-section">
+        <div class="img-btns">
+          <button class="img-btn" onclick="pickImg('${item.id}','${dayId}')">📷 從相簿選圖</button>
+          <button class="img-btn" onclick="showUrlInput()">🔗 貼圖片網址</button>
+        </div>
+        <div id="urlRow" style="display:none">
+          <input class="inp" id="ef-img" placeholder="https://... 結尾須為 .jpg/.png 等" style="margin-top:6px" oninput="previewUrl(this)">
+          <img id="ipv" style="display:none;margin-top:6px" class="img-preview" onerror="this.style.display='none'">
+        </div>
+       </div>`;
+  return `<div class="ic editing">
+    <div class="ef">
+      <div class="er">
+        <input class="inp" id="ef-time" value="${esc(item.time)}" placeholder="時間">
+        <input class="inp" id="ef-emoji" value="${esc(item.emoji)}" placeholder="🎯" style="text-align:center">
+        <input class="inp" id="ef-title" value="${esc(item.title)}" placeholder="標題">
+      </div>
+      <textarea class="inp" id="ef-desc" placeholder="說明（支援換行）">${esc(item.desc)}</textarea>
+      <div class="etgs" id="etgs">${tags}</div>
+      <div class="color-strip" id="cstrip">${dots}</div>
+      <div class="tagrow">
+        <input class="inp" id="ef-nt" placeholder="新增標籤，先選顏色再點 +" onkeydown="if(event.key==='Enter'){event.preventDefault();addTag('${item.id}')}">
+        <button class="bp" style="padding:8px 13px;white-space:nowrap" onclick="addTag('${item.id}')">+</button>
+      </div>
+      <input class="inp" id="ef-link" value="${esc(item.link)}" placeholder="🔗 Naver 地圖 或相關連結 URL">
+      ${imgBlock}
+      <div class="ea">
+        <button class="bc" onclick="cancelEdit()">取消</button>
+        <button class="bp" onclick="saveItem('${dayId}','${item.id}')">✓ 儲存</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
+function gotoDay(id){ S.day=id; S.editing=null; render(); window.scrollTo(0,0); }
+function setPlan(dayId,p){ S.plan[dayId]=p; S.editing=null; render(); }
+function startEdit(id){ S.editing=id; render(); setTimeout(()=>{ const el=document.querySelector(".ic.editing"); if(el) el.scrollIntoView({behavior:"smooth",block:"nearest"}); },80); }
+function cancelEdit(){ S.editing=null; render(); }
+
+function saveItem(dayId,itemId){
+  const day=S.days.find(d=>d.id===dayId);
+  const items=[...getItems(day)];
+  const i=items.findIndex(x=>x.id===itemId); if(i<0) return;
+  const urlInp=document.getElementById("ef-img");
+  const newImg = urlInp ? urlInp.value.trim() : items[i].img;
+  items[i]={...items[i],
+    time:document.getElementById("ef-time").value,
+    emoji:document.getElementById("ef-emoji").value,
+    title:document.getElementById("ef-title").value,
+    desc:document.getElementById("ef-desc").value,
+    link:document.getElementById("ef-link").value,
+    img: S.pendingImg&&S.pendingImg.itemId===itemId ? S.pendingImg.base64 : (newImg||items[i].img)
+  };
+  setItems(dayId,items);
+  S.pendingImg=null; S.editing=null; render();
+}
+
+function pickColor(id){
+  _selColor = id;
+  // re-render just the strip dots
+  const strip = document.getElementById("cstrip");
+  if(strip) strip.innerHTML = PALETTES.map(p=>`<span class="cs${_selColor===p.id?" sel":""}" style="background:${p.dot}" onclick="pickColor('${p.id}')" title="${p.id}"></span>`).join("");
+}
+
+function addTag(itemId){
+  const inp=document.getElementById("ef-nt"); const v=inp.value.trim(); if(!v) return;
+  const day=S.days.find(d=>d.id===S.day);
+  const items=getItems(day); const item=items.find(x=>x.id===itemId);
+  if(item){
+    item.tags.push(v);
+    if(!TM[v]) CC[v]=_selColor; // save colour for custom tags
+    saveCC();
+    setItems(day.id,items);
+  }
+  inp.value="";
+  const el=document.getElementById("etgs");
+  if(el) el.innerHTML=item.tags.map((t,i)=>renderTag(t,`rmTag('${itemId}',${i})`)).join("");
+}
+
+function rmTag(itemId,idx){
+  const day=S.days.find(d=>d.id===S.day);
+  const items=getItems(day); const item=items.find(x=>x.id===itemId);
+  if(item){ item.tags.splice(idx,1); setItems(day.id,items); }
+  const el=document.getElementById("etgs");
+  if(el) el.innerHTML=item.tags.map((t,i)=>renderTag(t,`rmTag('${itemId}',${i})`)).join("");
+}
+
+function delItem(dayId,itemId){
+  if(!confirm("確定刪除？")) return;
+  const day=S.days.find(d=>d.id===dayId);
+  setItems(dayId,getItems(day).filter(x=>x.id!==itemId));
+  S.editing=null; render();
+}
+
+function moveItem(dayId,itemId,dir){
+  const day=S.days.find(d=>d.id===dayId);
+  const items=[...getItems(day)];
+  const i=items.findIndex(x=>x.id===itemId); const to=i+dir;
+  if(to<0||to>=items.length) return;
+  [items[i],items[to]]=[items[to],items[i]];
+  setItems(dayId,items); render();
+}
+
+function addItem(dayId){
+  const day=S.days.find(d=>d.id===dayId);
+  const ni={id:uid(),time:"",emoji:"📌",title:"新行程項目",desc:"",tags:[],link:"",img:""};
+  setItems(dayId,[...getItems(day),ni]);
+  S.editing=ni.id; render();
+  setTimeout(()=>{ const el=document.querySelector(".ic.editing"); if(el) el.scrollIntoView({behavior:"smooth",block:"nearest"}); },80);
+}
+
+function editDayHd(dayId){
+  const d=S.days.find(x=>x.id===dayId);
+  const t=prompt("日期",d.date); if(t!==null) d.date=t;
+  const tt=prompt("標題",d.title); if(tt!==null) d.title=tt;
+  const th=prompt("主題說明",d.theme); if(th!==null) d.theme=th;
+  const h=prompt("住宿",d.hotel); if(h!==null) d.hotel=h;
+  render();
+}
+
+// ─── Image Handling ───────────────────────────────────────────────────────────
+let _pendingItemId="", _pendingDayId="";
+function pickImg(itemId,dayId){
+  _pendingItemId=itemId; _pendingDayId=dayId;
+  document.getElementById("fileImg").click();
+}
+function handleImgFile(input){
+  const file=input.files[0]; if(!file) return;
+  // Resize before embedding to keep file size manageable
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const MAX=1200;
+      let w=img.width, h=img.height;
+      if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+      const canvas=document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0,w,h);
+      const b64=canvas.toDataURL("image/jpeg",0.82);
+      S.pendingImg={itemId:_pendingItemId,dayId:_pendingDayId,base64:b64};
+      // update preview in edit form
+      const pv=document.getElementById("ipv");
+      if(pv){ pv.src=b64; pv.style.display="block"; }
+      // also update item immediately & save
+      const day=S.days.find(d=>d.id===_pendingDayId);
+      const items=getItems(day);
+      const item=items.find(x=>x.id===_pendingItemId);
+      if(item){ item.img=b64; setItems(_pendingDayId,items); render(); }
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value="";
+}
+
+function clearImg(itemId,dayId){
+  const day=S.days.find(d=>d.id===dayId);
+  const items=getItems(day);
+  const item=items.find(x=>x.id===itemId);
+  if(item){ item.img=""; setItems(dayId,items); }
+  S.pendingImg=null; render();
+}
+
+function showUrlInput(){
+  const row=document.getElementById("urlRow");
+  if(row) row.style.display="block";
+}
+
+function previewUrl(inp){
+  const pv=document.getElementById("ipv");
+  if(!pv) return;
+  if(inp.value){ pv.src=inp.value; pv.style.display="block"; }
+  else pv.style.display="none";
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+function editTitle(){
+  document.getElementById("hdText").style.display="none";
+  const ea=document.getElementById("hdEdit");
+  ea.style.display="flex";
+  document.getElementById("hdInp").value=S.title;
+  document.getElementById("hdInp").focus();
+}
+function saveTitle(){
+  S.title=document.getElementById("hdInp").value;
+  document.getElementById("hdT").textContent=S.title;
+  document.getElementById("hdText").style.display="block";
+  document.getElementById("hdEdit").style.display="none";
+}
+
+// ─── Persist ──────────────────────────────────────────────────────────────────
+function saveAll(){
+  try{
+    localStorage.setItem("bt4",JSON.stringify({title:S.title,days:S.days}));
+    const b=document.getElementById("svBtn");
+    b.textContent="✓ 已儲存"; b.classList.add("ok");
+    setTimeout(()=>{b.textContent="💾 儲存";b.classList.remove("ok");},2000);
+  }catch(e){alert("儲存失敗（可能空間不足，圖片太多時請匯出備份）");}
+}
+function doExport(){
+  const blob=new Blob([JSON.stringify({title:S.title,days:S.days},null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="busan_trip_backup.json"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function doImport(){ document.getElementById("fileJSON").click(); }
+function handleJSON(input){
+  const file=input.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const p=JSON.parse(e.target.result);
+      if(p.days){ S.days=p.days; S.title=p.title||S.title; render(); alert("✅ 匯入成功！"); }
+      else alert("格式不正確");
+    }catch(err){alert("匯入失敗："+err.message);}
+  };
+  r.readAsText(file); input.value="";
+}
+</script>
+</body>
+</html>
